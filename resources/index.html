@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Karaokebar</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <link rel="stylesheet" href="http://karaoke/resources/jquery.mobile-1.4.5.min.css">
+
+    <script type="text/javascript" src="http://karaoke/resources/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="http://karaoke/resources/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body><script type="text/javascript">
+ $(function() {
+ $("#songlist").load( "http://karaoke:1111/list" , function(){
+    $('#songlist').trigger('create');
+    $('#songlist').listview('refresh');
+    $('a').click(function (event){
+         event.preventDefault();
+         if (confirm("Add song?")){
+         $.ajax({
+            url: $(this).attr('href')
+            ,success: function(response) {
+                alert(response)
+            }
+         })
+         return false;}
+    })
+    });
+});
+
+     </script>
+
+<div data-role="page" data-theme="b" id="index">
+    <header data-role="header">
+         <p><a href="http://karaoke:1111/playlist?stop" data-role="button">Cancel current song</a></p>
+    </header>
+
+    <div data-role="content" data-theme="a">
+        <form class="ui-filterable">
+            <input id="filterBasic-input" data-type="search">
+        </form>
+        <ul id="songlist" data-role="listview" data-filter="true" data-input="#filterBasic-input">
+
+
+        </ul>
+    </div>
+
+    <footer data-role="footer">
+        <h2>by karaoke.copacabana@gmail.com</h2>
+    </footer>
+</div>
+</body>
+</html>
