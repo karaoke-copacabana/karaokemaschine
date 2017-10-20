@@ -16,10 +16,19 @@ public class PlaylistHandler implements HttpHandler {
     private Playlist playlist;
     private Collection collection;
     private HashMap<String, User> users = new HashMap<String, User>();
+    private int currentVolume;
 
     public PlaylistHandler (Playlist playlist, Collection collection) {
         this.playlist = playlist;
         this.collection = collection;
+        //set initial volume
+
+        try {
+            this.setVolume(50);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -38,8 +47,12 @@ public class PlaylistHandler implements HttpHandler {
         if (command.contains("stop")) {
             this.handleStop(httpExchange);
         }
-
-
+        if (command.contains("volumeUp")) {
+            this.handleVolumeUp(httpExchange);
+        }
+        if (command.contains("volumeDown")) {
+            this.handleVolumeDown(httpExchange);
+        }
 
 
     }
@@ -85,6 +98,47 @@ public class PlaylistHandler implements HttpHandler {
         OutputStream os = httpExchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
+
+    }
+
+    private void handleVolumeUp(HttpExchange httpExchange) throws IOException {
+
+        int newVolume = Math.min(100, this.currentVolume+10);
+        this.setVolume(newVolume);
+        String response = "Volume increased";
+        System.out.println(response);
+
+
+        httpExchange.sendResponseHeaders(200, response.length());
+        OutputStream os = httpExchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+
+    }
+    private void handleVolumeDown(HttpExchange httpExchange) throws IOException {
+
+        int newVolume = Math.max(0, this.currentVolume - 10);
+        this.setVolume(newVolume);
+        String response = "Volume lowered";
+        System.out.println(response);
+
+
+        httpExchange.sendResponseHeaders(200, response.length());
+        OutputStream os = httpExchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+
+    private void setVolume(int Volume) throws IOException {
+        String[] command = new String[4];
+        command[0] ="amixer";
+        command[1] ="sset";
+        command[2] ="Master";
+        command[3] =Volume+"%";
+        Runtime.getRuntime().exec(command);
+
+        this.currentVolume=Volume;
 
     }
     private User getUser(InetSocketAddress address) {

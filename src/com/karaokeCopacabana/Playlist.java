@@ -65,7 +65,7 @@ public class Playlist implements Runnable {
         command[1] = "-f";
         command[2] = "--zoom=full";
         command[3] = this.currentlyPlaying.getSong().getPath();
-        //System.out.println("command: "+ command);
+        System.out.println("command: "+ command);
 
 
         StringBuffer output = new StringBuffer();
@@ -81,6 +81,11 @@ public class Playlist implements Runnable {
                 output.append(line + "\n");
             }
             System.out.println("song " + this.currentlyPlaying.getSong().getTitle() + " finished.");
+            //This is the last song!
+            if (this.currentlyPlaying.getSong().getTitle() == "Barry Manilow - Copacabana") {
+                Runtime.getRuntime().exec("sudo shutdown now");
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

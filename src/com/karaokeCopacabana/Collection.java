@@ -1,5 +1,8 @@
 package com.karaokeCopacabana;
 
+import com.oracle.javafx.jmx.json.*
+        ;
+
 import java.util.ArrayList;
 import java.io.File;
 
@@ -9,6 +12,7 @@ import java.io.File;
 public class Collection {
     private ArrayList<Song> songs = new ArrayList<Song>(10000);
     private String list = "";
+
 
     public void load(String location) {
         File directory = new File(location);
@@ -32,8 +36,9 @@ public class Collection {
 
     public void init() {
         int i=0;
+
         for(Song song: this.songs) {
-            list += "<li><a href=\"http://karaoke:8001/playlist?addSong=" + i + "\">" + song.getTitle() + "</a></li>\n";
+            this.list += "<li ><a class=\"song\" href=\"http://karaoke:8001/playlist?addSong=" + i + "\">" + song.getTitle() + "</a></li>\n";
             i++;
         }
     }

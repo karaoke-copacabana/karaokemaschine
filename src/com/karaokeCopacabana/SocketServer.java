@@ -16,13 +16,22 @@ public class SocketServer extends WebSocketServer {
     private SourceDataLine soundLine;
     public SocketServer(InetSocketAddress address) throws LineUnavailableException {
         super(address);
+
         Mixer.Info[] mixer = AudioSystem.getMixerInfo();
-        System.out.println(mixer[0]);
-        //final AudioFormat audioFormat = new AudioFormat(44100, 16, 1, false, false);
+        for (Mixer.Info info: mixer) {
+            System.out.println(info.getName());
+            System.out.println(info.getDescription());
+        }
+        Mixer mix = AudioSystem.getMixer(mixer[0]);
+        System.out.println(mix.getSourceLineInfo());
+        this.soundLine = (SourceDataLine) mix.getLine(mix.getSourceLineInfo()[0]);
+
+
+        final AudioFormat audioFormat = new AudioFormat(16000, 16, 1, false, false);
         //final DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat, 1);
         //this.soundLine = (SourceDataLine) AudioSystem.getLine(info);
-        //this.soundLine.open(audioFormat, 1024);
-        //this.soundLine.start();
+        this.soundLine.open(audioFormat, 1024);
+        this.soundLine.start();
 
 
     }
@@ -54,6 +63,7 @@ public class SocketServer extends WebSocketServer {
     }
 
     public void onFragment( WebSocket conn, Framedata fragment ) {
+        System.out.print("fragment");
         this.soundLine.write(fragment.getPayloadData().array(),0,1024);
     }
 

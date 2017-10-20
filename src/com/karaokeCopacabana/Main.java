@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         try {
 
-
+/*
             SocketServer socketServer = null;
             try {
                 socketServer = new SocketServer(new InetSocketAddress(8002));
@@ -20,15 +20,11 @@ public class Main {
                 e.printStackTrace();
             }
             new Thread(socketServer).start();
-
-
-
-
-
+*/
             //mic control deactivated
             //ScreamServer screamServer = new ScreamServer(8002);
             //new Thread(screamServer).start();
-            HttpServer server = HttpServer.create(new InetSocketAddress(1111), 0);
+            HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
             Playlist playlist = new Playlist();
             Collection collection = new Collection();
             collection.load("/home/pi/songs/");

@@ -9,15 +9,16 @@
 
     <link rel="stylesheet" href="http://karaoke/resources/jquery.mobile-1.4.5.min.css">
 
-    <script type="text/javascript" src="http://karaoke/resources/jquery-1.6.4.min.js"></script>
+
+    <script type="text/javascript" src="http://karaoke/resources/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="http://karaoke/resources/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body><script type="text/javascript">
  $(function() {
- $("#songlist").load( "http://karaoke:1111/list" , function(){
+ $("#songlist").load( "http://karaoke:8001/list" , function(){
     $('#songlist').trigger('create');
     $('#songlist').listview('refresh');
-    $('a').click(function (event){
+    $('a.song').click(function (event){
          event.preventDefault();
          if (confirm("Add song?")){
          $.ajax({
@@ -28,20 +29,110 @@
          })
          return false;}
     })
-    });
+     $('#buttonStop').click(function (event){
+         event.preventDefault();
+         if (confirm("Cancel current song?")){
+         $.ajax({
+            url: $(this).attr('href')
+            ,success: function(response) {
+                alert(response)
+            }
+         })
+         return false;}
+    })
+     $('a.directButton').click(function (event){
+         event.preventDefault();
+         $.ajax({
+            url: $(this).attr('href')
+            ,success: function(response) {
+            }
+         })
+    })
+});
 });
 
      </script>
 
-<div data-role="page" data-theme="b" id="index">
-    <header data-role="header">
-         <p><a href="http://karaoke:1111/playlist?stop" data-role="button">Cancel current song</a></p>
+<!--script type="text/javascript">
+if ("WebSocket" in window)
+            {
+
+               // Let us open a web socket
+                                                                                                                                                   var ws = new WebSocket("ws://localhost:8002");
+
+               ws.onopen = function()
+               {
+                  // Web Socket is connected, send data using send()
+                  console.log("socket opened, sending welcome");
+                  ws.send("welcome");
+
+               };
+
+               ws.onmessage = function (evt)
+               {
+                  var received_msg = evt.data;
+                  alert("Message is received...");
+               };
+
+               ws.onclose = function()
+               {
+                  // websocket is closed.
+                  alert("Connection is closed...");
+               };
+            }
+
+            else
+            {
+               // The browser doesn't support WebSocket
+               alert("WebSocket NOT supported by your Browser!");
+            }
+
+navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia ||
+                       navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+var context;
+var analyser;
+var microphone;
+if (navigator.getUserMedia) {
+    navigator.getUserMedia({audio: true}, function(stream) {
+        context = new AudioContext();
+        microphone = context.createMediaStreamSource(stream);
+        console.log ("connecting mic");
+        var output = context.createScriptProcessor(1024, 1, 1)
+        microphone.connect(output);
+        output.connect(context.destination)
+        output.onaudioprocess = function(event)
+    {
+        var audio_data = event.inputBuffer.getChannelData(0);
+        console.log(audio_data)
+        ws.send(audio_data);
+        //ws.send("test");
+        // send audio_data to server
+    }
+
+    }, function (){console.warn("Error getting audio stream from getUserMedia")});
+};
+
+
+ </script-->
+
+
+
+<div data-role="page" data-theme="b" id="collection">
+    <header data-position="fixed" data-role="header">
+         <p>
+             <a href="http://karaoke:8001/playlist?stop" id="buttonStop" data-role="button">Cancel current song</a>
+             <a href="http://karaoke:8001/playlist?volumeUp" class="directButton" data-role="button">Vol+</a>
+             <a href="http://karaoke:8001/playlist?volumeDown" class="directButton" data-role="button">Vol-</a>
+                <form class="ui-filterable">
+                    <input id="filterBasic-input" data-type="search">
+                </form>
+
+        </p>
     </header>
 
+
     <div data-role="content" data-theme="a">
-        <form class="ui-filterable">
-            <input id="filterBasic-input" data-type="search">
-        </form>
+
         <ul id="songlist" data-role="listview" data-filter="true" data-input="#filterBasic-input">
 
 
@@ -52,5 +143,12 @@
         <h2>by karaoke.copacabana@gmail.com</h2>
     </footer>
 </div>
+<div data-role="page" id="playlist">
+    <div data-role="main" class="ui-content">
+        <a href="#collection">Go to Page One</a>
+    </div>
+</div>
+
+
 </body>
 </html>
